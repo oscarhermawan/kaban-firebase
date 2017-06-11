@@ -1,5 +1,6 @@
 <template>
   <div id="container">
+    {{tasks.length}}
     <nav class="nav has-shadow">
       <div class="container">
         <div class="nav-left">
@@ -19,7 +20,7 @@
             </figure>
             Profile
           </a>
-          <a class="nav-item is-tab">Add Back Log</a>
+          <a class="nav-item is-tab" @click="openModalAdd">Add Back Log</a>
           <a class="nav-item is-tab">Log out</a>
         </div>
       </div>
@@ -48,9 +49,8 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item">Save</a>
             <a class="card-footer-item">Edit</a>
-            <a class="card-footer-item">Delete</a>
+            <a class="card-footer-item" @click="removeTask(task)">Delete</a>
           </footer>
         </div>
         <br>
@@ -78,9 +78,8 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item">Save</a>
             <a class="card-footer-item">Edit</a>
-            <a class="card-footer-item">Delete</a>
+            <a class="card-footer-item" @click="removeTask(task)">Delete</a>
           </footer>
         </div>
       </div>
@@ -103,13 +102,12 @@
           </header>
           <div class="card-content">
             <div class="content">
-              {{task.desc}}
+              {{ task.desc }}
             </div>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item">Save</a>
             <a class="card-footer-item">Edit</a>
-            <a class="card-footer-item">Delete</a>
+            <a class="card-footer-item" @click="removeTask(task)">Delete</a>
           </footer>
         </div>
       </div>
@@ -136,14 +134,37 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item">Save</a>
             <a class="card-footer-item">Edit</a>
-            <a class="card-footer-item">Delete</a>
+            <a class="card-footer-item" @click="removeTask(task)">Delete</a>
           </footer>
         </div>
       </div>
       <!-- AKHIR DONE -->
     </div>
+
+
+    <!-- LOGIN -->
+    <div :class="modalAddTask">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">Masuk</p>
+          <button class="delete"></button>
+        </header>
+        <section class="modal-card-body">
+            <input class="input" type="text" v-model="newTask.title" placeholder="Add a Title">
+            <input class="input" type="text" v-model="newTask.desc" placeholder="Add a Description">
+            <input class="input" type="text" v-model="newTask.status" placeholder="Add a Status">
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-success" name="button" @click="addTask"> Add Task </button>
+          <a class="button" @click="closeModal">Cancel</a>
+        </footer>
+      </div>
+    </div>
+    <!-- END LOGIN -->
+
+
 
   </div>
 </template>
@@ -163,19 +184,40 @@ var config = {
 
 const firebaseApp = firebase.initializeApp(config)
 const db = firebaseApp.database()
-let tasks = db.ref('tasks')
+let tasksRef = db.ref('tasks')
 
 export default{
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      newTask:{
+        title:'',
+        desc:'',
+        status:''
+      },
+      modalAddTask:'modal'
     }
   },
   firebase:{
-    tasks:tasks
+    tasks:tasksRef
   },
   methods:{
-
+    addTask:function(){
+      console.log('masuk add task', this.newTask);
+      tasksRef.push(this.newTask)
+      this.modalAddTask='modal'
+      this.newTask.title = ''
+      this.newTask.desc = ''
+      this.newTask.status = ''
+    },
+    openModalAdd:function(){
+      this.modalAddTask='modal is-active'
+    },
+    closeModal:function(){
+      this.modalAddTask='modal'
+    },
+    removeTask:function(task){
+      tasksRef.child(task['.key']).remove()
+    }
   },
   computed:{
     backlog () {
