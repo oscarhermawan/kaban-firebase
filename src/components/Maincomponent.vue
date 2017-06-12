@@ -1,6 +1,5 @@
 <template>
   <div id="container">
-    {{tasks.length}}
     <nav class="nav has-shadow">
       <div class="container">
         <div class="nav-left">
@@ -49,11 +48,10 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item">Edit</a>
+            <a class="card-footer-item" @click="editTask(task)">Edit</a>
             <a class="card-footer-item" @click="removeTask(task)">Delete</a>
           </footer>
         </div>
-        <br>
       </div>
       <!-- AKHIR BACKLOG -->
 
@@ -78,7 +76,7 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item">Edit</a>
+            <a class="card-footer-item" @click="editTask(task)">Edit</a>
             <a class="card-footer-item" @click="removeTask(task)">Delete</a>
           </footer>
         </div>
@@ -106,7 +104,7 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item">Edit</a>
+            <a class="card-footer-item" @click="editTask(task)">Edit</a>
             <a class="card-footer-item" @click="removeTask(task)">Delete</a>
           </footer>
         </div>
@@ -134,7 +132,7 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a class="card-footer-item">Edit</a>
+            <a class="card-footer-item" @click="editTask(task)">Edit</a>
             <a class="card-footer-item" @click="removeTask(task)">Delete</a>
           </footer>
         </div>
@@ -194,7 +192,8 @@ export default{
         desc:'',
         status:''
       },
-      modalAddTask:'modal'
+      modalAddTask:'modal',
+      modalEditTask:'modal'
     }
   },
   firebase:{
@@ -217,6 +216,18 @@ export default{
     },
     removeTask:function(task){
       tasksRef.child(task['.key']).remove()
+    },
+    editTask:function(task){
+      if(task.status == 'backlog'){
+        this.modalEditTask = 'modal is-active'
+
+      } else if(task.status == 'todo'){
+
+      } else if(task.status == 'doing'){
+
+      } else if(task.status == 'done'){
+
+      }
     }
   },
   computed:{
